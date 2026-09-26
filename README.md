@@ -1,6 +1,6 @@
 # The White Room
 
-Nine quick attention and reaction games. Each game starts immediately and lasts 45 seconds. Scores appear at the end, and personal bests are saved in this browser. No account, install, or build step is needed.
+Nine quick attention and reaction games. Open a game, then press any key or tap to start its 45-second round. Scores appear at the end, and personal bests are saved in this browser. No account, install, or build step is needed.
 
 ## Run locally
 

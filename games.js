@@ -1,13 +1,13 @@
 export const GAMES = [
-  { id: "larger-number", name: "Larger Number", description: "Spot the bigger value.", instruction: "Choose the larger of two numbers as quickly as you can." },
-  { id: "moving-point", name: "Moving Point", description: "Wait for the signal. React.", instruction: "Watch the moving point. Tap when it turns blue and the ring appears. Early taps count as misses." },
-  { id: "unique-figure", name: "Unique Figure", description: "Find the one that differs.", instruction: "Find the one shape that is different from the rest." },
-  { id: "shape-match", name: "Shape Match", description: "Find the exact twin.", instruction: "Look at the target shape, then choose its identical match." },
-  { id: "find-number", name: "Find Number", description: "Scan the grid fast.", instruction: "Find the requested number in the grid." },
-  { id: "color-clash", name: "Color Clash", description: "Read the ink, not the word.", instruction: "Choose the ink color of the word, not what the word says." },
-  { id: "sequence-recall", name: "Sequence Recall", description: "Watch. Remember. Repeat.", instruction: "Watch the lit squares, then tap them in the same order." },
-  { id: "direction-switch", name: "Direction Switch", description: "Same or opposite?", instruction: "Follow the rule shown above the arrow. Choose the same or opposite direction." },
-  { id: "stop-the-line", name: "Stop the Line", description: "Catch the center zone.", instruction: "Stop the moving line while it is inside the blue zone." },
+  { id: "larger-number", name: "Larger Number", description: "Spot the bigger value.", instruction: "Choose the larger of two numbers as quickly as you can.", controls: "Use the left and right arrow keys, or click a number." },
+  { id: "moving-point", name: "Moving Point", description: "Wait for the signal. React.", instruction: "Watch the moving point. React when it turns blue and the ring appears. Early responses count as misses.", controls: "Press Space, or click the play area." },
+  { id: "unique-figure", name: "Unique Figure", description: "Find the one that differs.", instruction: "Find the one shape that is different from the rest.", controls: "Click or tap the unique figure." },
+  { id: "shape-match", name: "Shape Match", description: "Find the exact twin.", instruction: "Look at the target shape, then choose its identical match.", controls: "Click or tap the matching figure." },
+  { id: "find-number", name: "Find Number", description: "Scan the grid fast.", instruction: "Find the requested number in the grid.", controls: "Click or tap the number." },
+  { id: "color-clash", name: "Color Clash", description: "Read the ink, not the word.", instruction: "Choose the ink color of the word, not what the word says.", controls: "Click or tap the ink color." },
+  { id: "sequence-recall", name: "Sequence Recall", description: "Watch. Remember. Repeat.", instruction: "Watch the lit squares, then tap them in the same order.", controls: "Click or tap the squares in order." },
+  { id: "direction-switch", name: "Direction Switch", description: "Same or opposite?", instruction: "Follow the rule shown above the arrow. Choose the same or opposite direction.", controls: "Use the arrow keys, or click a direction." },
+  { id: "stop-the-line", name: "Stop the Line", description: "Catch the center zone.", instruction: "Stop the moving line while it is inside the blue zone.", controls: "Press Space, or click the play area." },
 ];
 
 export const SYMBOLS = [

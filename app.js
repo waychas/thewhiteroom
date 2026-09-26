@@ -15,10 +15,11 @@ import {
 const app = document.querySelector("#app");
 const ROUND_MS = 45_000;
 let activeSession = null;
+let readyKeyHandler = null;
 
 function heading(game) {
   return `<a class="back-link" href="#/">← All games</a>
-    <div class="game-heading"><h1>${game.name}</h1><p>${game.instruction}</p></div>`;
+    <div class="game-heading"><h1>${game.name}</h1><p>${game.instruction}</p><p class="control-hint">${game.controls}</p></div>`;
 }
 
 function renderHome() {
@@ -28,6 +29,32 @@ function renderHome() {
       <div class="card-top"><span class="card-number">${String(index + 1).padStart(2, "0")} / 09</span><span class="card-arrow" aria-hidden="true">↗</span></div>
       <h2>${game.name}</h2><p>${game.description}</p></a>`).join("")}</div>`;
   document.title = "The White Room";
+}
+
+function clearReadyHandler() {
+  if (!readyKeyHandler) return;
+  document.removeEventListener("keydown", readyKeyHandler);
+  readyKeyHandler = null;
+}
+
+function renderArmed(game) {
+  app.innerHTML = `<div class="game-page">${heading(game)}<div class="game-panel">
+    <div class="stage start-stage"><button class="start-surface" id="start-button" type="button">
+      <strong>Press any key to start</strong><span>or click / tap here</span>
+    </button></div></div></div>`;
+  document.title = `${game.name} | The White Room`;
+  const start = () => {
+    clearReadyHandler();
+    startGame(game);
+  };
+  document.querySelector("#start-button").addEventListener("click", start);
+  readyKeyHandler = (event) => {
+    if (event.key === "Tab" || event.metaKey || event.ctrlKey || event.altKey || event.repeat || event.target.closest?.("a")) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    start();
+  };
+  document.addEventListener("keydown", readyKeyHandler);
 }
 
 function clearGameEffects(session) {
@@ -49,6 +76,14 @@ function animate(session, callback) {
   };
   frame = window.requestAnimationFrame(tick);
   session.effects.push(() => window.cancelAnimationFrame(frame));
+}
+
+function bindKey(session, onKeydown) {
+  const handler = (event) => {
+    if (!event.repeat) onKeydown(event);
+  };
+  document.addEventListener("keydown", handler);
+  session.effects.push(() => document.removeEventListener("keydown", handler));
 }
 
 function stopSession() {
@@ -149,6 +184,12 @@ function nextChallenge(session) {
       const round = largerNumberRound();
       stage.innerHTML = `<p class="prompt">Which number is larger?</p>${choiceMarkup(round.options, "two")}<p class="feedback" id="feedback" aria-live="polite"></p>`;
       bindChoices(session, round.answerIndex);
+      bindKey(session, (event) => {
+        const index = event.key === "ArrowLeft" ? 0 : event.key === "ArrowRight" ? 1 : -1;
+        if (index < 0) return;
+        event.preventDefault();
+        recordAnswer(session, index === round.answerIndex);
+      });
       break;
     }
     case "moving-point": {
@@ -165,12 +206,18 @@ function nextChallenge(session) {
         pad.setAttribute("aria-label", "Signal shown, press now");
         document.querySelector("#reaction-label").textContent = "TAP NOW";
       }, 1400 + randomInt(2000));
-      pad.addEventListener("click", () => {
+      const react = () => {
         if (cueAt === null) recordAnswer(session, false, "Too soon");
         else {
           const reaction = Math.round(performance.now() - cueAt);
           recordAnswer(session, true, `${reaction} ms`, reaction);
         }
+      };
+      pad.addEventListener("click", react);
+      bindKey(session, (event) => {
+        if (event.code !== "Space") return;
+        event.preventDefault();
+        react();
       });
       break;
     }
@@ -203,7 +250,7 @@ function nextChallenge(session) {
       const round = colorClashRound();
       stage.innerHTML = `<p class="prompt">What color is the ink?</p>
         <div class="ink-word" style="color:${round.ink.hex}" aria-label="${round.word.name}, shown in ${round.ink.name} ink">${round.word.name.toUpperCase()}</div>
-        ${choiceMarkup(round.options.map((color) => color.name), "four")}
+        ${choiceMarkup(round.options.map((color) => color.name), "two color-choices")}
         <p class="feedback" id="feedback" aria-live="polite"></p>`;
       bindChoices(session, round.answerIndex);
       break;
@@ -238,14 +285,12 @@ function nextChallenge(session) {
           `<button class="choice" type="button" data-index="${index}" aria-label="${direction.name}">${direction.glyph}</button>`).join("")}</div>
         <p class="feedback" id="feedback" aria-live="polite"></p>`;
       bindChoices(session, round.answerIndex);
-      const onKeydown = (event) => {
+      bindKey(session, (event) => {
         const index = DIRECTIONS.findIndex((direction) => direction.key === event.key);
         if (index < 0) return;
         event.preventDefault();
         recordAnswer(session, index === round.answerIndex);
-      };
-      document.addEventListener("keydown", onKeydown);
-      session.effects.push(() => document.removeEventListener("keydown", onKeydown));
+      });
       break;
     }
     case "stop-the-line": {
@@ -260,9 +305,15 @@ function nextChallenge(session) {
         return (phase <= 1 ? phase : 2 - phase) * 100;
       };
       animate(session, (now) => marker.style.left = `${position(now)}%`);
-      document.querySelector("#timing-pad").addEventListener("click", () => {
+      const stop = () => {
         const percent = position(performance.now());
         recordAnswer(session, percent >= 42 && percent <= 58, percent >= 42 && percent <= 58 ? "Perfect timing" : "Outside the zone");
+      };
+      document.querySelector("#timing-pad").addEventListener("click", stop);
+      bindKey(session, (event) => {
+        if (event.code !== "Space") return;
+        event.preventDefault();
+        stop();
       });
       break;
     }
@@ -271,9 +322,10 @@ function nextChallenge(session) {
 
 function renderRoute() {
   stopSession();
+  clearReadyHandler();
   const match = location.hash.match(/^#\/game\/([a-z-]+)$/);
   const game = match && GAMES.find((item) => item.id === match[1]);
-  if (game) startGame(game);
+  if (game) renderArmed(game);
   else renderHome();
 }
 

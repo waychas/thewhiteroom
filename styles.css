@@ -45,7 +45,8 @@ h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.06
 .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-size: .95rem; margin-bottom: 2.5rem; }
 .back-link:hover { color: var(--ink); text-decoration: underline; }
 .game-heading h1 { font-size: clamp(3rem, 8vw, 5.5rem); }
-.game-heading p:last-child { max-width: 34rem; margin: 1.1rem 0 0; color: var(--muted); font-size: 1.12rem; line-height: 1.5; }
+.game-heading p:not(.control-hint) { max-width: 34rem; margin: 1.1rem 0 0; color: var(--muted); font-size: 1.12rem; line-height: 1.5; }
+.game-heading .control-hint { margin: .65rem 0 0; color: var(--accent); font-size: .95rem; font-weight: 700; line-height: 1.5; }
 .game-panel, .result-panel { margin-top: 2.7rem; border: 1px solid var(--line); background: var(--white); }
 .result-panel { padding: clamp(1.5rem, 5vw, 3rem); }
 .primary-button, .secondary-button { min-height: 48px; padding: .8rem 1.3rem; border: 1px solid var(--ink); font-weight: 700; }
@@ -59,12 +60,18 @@ h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.06
 .stat-value { font-size: 1.5rem; font-variant-numeric: tabular-nums; font-weight: 700; }
 .game-toolbar .stat { text-align: right; }
 .stage { min-height: 390px; padding: clamp(1.25rem, 4vw, 3rem); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.start-surface { width: min(100%, 520px); min-height: 210px; border: 1px solid var(--line); background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .7rem; }
+.start-surface:hover { border-color: var(--accent); background: var(--soft-accent); }
+.start-surface strong { font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -.04em; }
+.start-surface span { color: var(--muted); font-size: .95rem; }
 .prompt { font-size: clamp(1.35rem, 3vw, 1.9rem); font-weight: 650; letter-spacing: -.03em; margin-bottom: 2rem; }
 .subprompt { color: var(--muted); font-size: .95rem; margin: -1.3rem 0 1.7rem; }
 .choices { display: grid; gap: .75rem; width: min(100%, 520px); }
 .choices.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .choices.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .choice { display: grid; place-items: center; min-height: 88px; padding: .7rem; background: var(--white); border: 1px solid var(--line); color: var(--ink); font-size: clamp(1.3rem, 4vw, 2.4rem); font-variant-numeric: tabular-nums; font-weight: 650; }
+.color-choices { max-width: 420px; }
+.color-choices .choice { min-width: 0; font-size: 1.25rem; }
 .choice:hover:not(:disabled) { border-color: var(--accent); background: var(--soft-accent); }
 .choice:disabled { cursor: default; }
 .choice.symbol { font-family: Arial, sans-serif; font-size: 3rem; font-weight: 400; }
