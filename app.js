@@ -309,9 +309,10 @@ function nextChallenge(session) {
           <span class="timing-track" aria-hidden="true"><span class="timing-zone"></span><span class="timing-marker" id="timing-marker"></span></span>
           <span>STOP</span></button><p class="feedback" id="feedback" aria-live="polite"></p>`;
       const origin = performance.now();
+      const travelMs = Math.max(400, 900 - session.correct * 100);
       const marker = document.querySelector("#timing-marker");
       const position = (now) => {
-        const phase = ((now - origin) / 900) % 2;
+        const phase = ((now - origin) / travelMs) % 2;
         return (phase <= 1 ? phase : 2 - phase) * 100;
       };
       animate(session, (now) => marker.style.left = `${position(now)}%`);
