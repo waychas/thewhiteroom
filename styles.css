@@ -43,12 +43,12 @@ h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.06
 .game-card .card-best { margin-top: .75rem; color: var(--accent); font-weight: 700; }
 
 .game-page { max-width: 900px; margin: 0 auto; }
-.back-link { display: inline-block; color: var(--muted); text-decoration: none; font-size: .95rem; margin-bottom: 2.5rem; }
+.back-link { display: inline-block; color: var(--muted); text-decoration: none; font-size: .95rem; margin-bottom: 1.25rem; }
 .back-link:hover { color: var(--ink); text-decoration: underline; }
-.game-heading h1 { font-size: clamp(3rem, 8vw, 5.5rem); }
-.game-heading p:not(.control-hint) { max-width: 34rem; margin: 1.1rem 0 0; color: var(--muted); font-size: 1.12rem; line-height: 1.5; }
-.game-heading .control-hint { margin: .65rem 0 0; color: var(--accent); font-size: .95rem; font-weight: 700; line-height: 1.5; }
-.game-panel, .result-panel { margin-top: 2.7rem; border: 1px solid var(--line); background: var(--white); }
+.game-heading h1 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -.04em; }
+.game-heading p:not(.control-hint) { max-width: 40rem; margin: .8rem 0 0; color: var(--ink); font-size: 1.18rem; font-weight: 600; line-height: 1.4; }
+.game-heading .control-hint { margin: .5rem 0 0; color: var(--accent); font-size: 1rem; font-weight: 700; line-height: 1.5; }
+.game-panel, .result-panel { margin-top: 1.5rem; border: 1px solid var(--line); background: var(--white); }
 .result-panel { padding: clamp(1.5rem, 5vw, 3rem); }
 .primary-button, .secondary-button { min-height: 48px; padding: .8rem 1.3rem; border: 1px solid var(--ink); font-weight: 700; }
 .primary-button { background: var(--ink); color: var(--white); }

@@ -311,7 +311,7 @@ function nextChallenge(session) {
       const origin = performance.now();
       const marker = document.querySelector("#timing-marker");
       const position = (now) => {
-        const phase = ((now - origin) / 1500) % 2;
+        const phase = ((now - origin) / 900) % 2;
         return (phase <= 1 ? phase : 2 - phase) * 100;
       };
       animate(session, (now) => marker.style.left = `${position(now)}%`);
