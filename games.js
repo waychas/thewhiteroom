@@ -19,6 +19,10 @@ export const SYMBOLS = [
   { glyph: "△", label: "outline triangle" },
   { glyph: "◆", label: "filled diamond" },
   { glyph: "◇", label: "outline diamond" },
+  { glyph: "★", label: "filled star" },
+  { glyph: "☆", label: "outline star" },
+  { glyph: "✦", label: "filled four-point star" },
+  { glyph: "✧", label: "outline four-point star" },
 ];
 
 export const COLORS = [
@@ -64,7 +68,7 @@ export function uniqueFigureRound() {
 }
 
 export function shapeMatchRound() {
-  const options = shuffle(SYMBOLS).slice(0, 4);
+  const options = shuffle(SYMBOLS);
   const answerIndex = randomInt(options.length);
   return { target: options[answerIndex], options, answerIndex };
 }

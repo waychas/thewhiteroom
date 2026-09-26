@@ -29,6 +29,8 @@ test("generated selection games have exactly one correct answer", () => {
     assert.equal(unique.symbols.filter((symbol) => symbol === unique.symbols[unique.answerIndex]).length, 1);
 
     const match = shapeMatchRound();
+    assert.equal(match.options.length, 12);
+    assert.equal(new Set(match.options).size, 12);
     assert.equal(match.options.filter((symbol) => symbol === match.target).length, 1);
     assert.equal(match.options[match.answerIndex], match.target);
 
@@ -49,7 +51,7 @@ test("generated selection games have exactly one correct answer", () => {
 });
 
 test("memory sequences fit the grid and never repeat a square immediately", () => {
-  for (let length = 3; length <= 6; length++) {
+  for (let length = 3; length <= 12; length++) {
     for (let i = 0; i < 100; i++) {
       const sequence = sequenceRound(length);
       assert.equal(sequence.length, length);

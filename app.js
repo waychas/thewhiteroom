@@ -22,12 +22,20 @@ function heading(game) {
     <div class="game-heading"><h1>${game.name}</h1><p>${game.instruction}</p><p class="control-hint">${game.controls}</p></div>`;
 }
 
+function readHighScore(gameId) {
+  try {
+    return Math.max(0, Number(window.localStorage.getItem(`thewhiteroom:best:${gameId}`)) || 0);
+  } catch {
+    return 0;
+  }
+}
+
 function renderHome() {
   app.innerHTML = `<div class="home-heading"><h1>Exercises</h1>
     <p class="home-intro">Choose a game. Each round lasts 45 seconds.</p></div>
     <div class="game-grid">${GAMES.map((game, index) => `<a class="game-card" href="#/game/${game.id}">
       <div class="card-top"><span class="card-number">${String(index + 1).padStart(2, "0")} / 09</span><span class="card-arrow" aria-hidden="true">↗</span></div>
-      <h2>${game.name}</h2><p>${game.description}</p></a>`).join("")}</div>`;
+      <h2>${game.name}</h2><p>${game.description}</p><p class="card-best">Best: ${readHighScore(game.id)}</p></a>`).join("")}</div>`;
   document.title = "The White Room";
 }
 
@@ -40,7 +48,7 @@ function clearReadyHandler() {
 function renderArmed(game) {
   app.innerHTML = `<div class="game-page">${heading(game)}<div class="game-panel">
     <div class="stage start-stage"><button class="start-surface" id="start-button" type="button">
-      <strong>Press any key to start</strong><span>or click / tap here</span>
+      <strong>Press any key to start</strong><span>or click / tap here</span><span>Personal best: ${readHighScore(game.id)}</span>
     </button></div></div></div>`;
   document.title = `${game.name} | The White Room`;
   const start = () => {
@@ -121,9 +129,8 @@ function endSession(session) {
   const { game, score, correct, attempts, reactions } = session;
   stopSession();
   const key = `thewhiteroom:best:${game.id}`;
-  let best = score;
+  const best = Math.max(score, readHighScore(game.id));
   try {
-    best = Math.max(score, Number(window.localStorage.getItem(key)) || 0);
     window.localStorage.setItem(key, String(best));
   } catch {
     // The round remains playable when browser storage is unavailable.
@@ -232,7 +239,7 @@ function nextChallenge(session) {
     case "shape-match": {
       const round = shapeMatchRound();
       stage.innerHTML = `<p class="prompt">Find the exact match.</p><div class="target-symbol" aria-label="Target: ${round.target.label}">${round.target.glyph}</div>
-        <div class="choices four">${round.options.map((symbol, index) =>
+        <div class="choices four shape-choices">${round.options.map((symbol, index) =>
           `<button class="choice symbol" type="button" data-index="${index}" aria-label="${symbol.label}">${symbol.glyph}</button>`).join("")}</div>
         <p class="feedback" id="feedback" aria-live="polite"></p>`;
       bindChoices(session, round.answerIndex);
@@ -256,9 +263,9 @@ function nextChallenge(session) {
       break;
     }
     case "sequence-recall": {
-      const sequence = sequenceRound(Math.min(3 + Math.floor(session.correct / 2), 6));
+      const sequence = sequenceRound(3 + session.correct);
       let step = 0;
-      stage.innerHTML = `<p class="prompt" id="memory-prompt">Watch the sequence.</p><p class="subprompt">${sequence.length} squares</p>
+      stage.innerHTML = `<p class="prompt" id="memory-prompt">Watch the sequence.</p><p class="subprompt">Level ${session.correct + 1} · ${sequence.length} squares</p>
         <div class="memory-grid">${Array.from({ length: 9 }, (_, index) =>
           `<button class="choice" type="button" data-index="${index}" aria-label="Square ${index + 1}" disabled></button>`).join("")}</div>
         <p class="feedback" id="feedback" aria-live="polite"></p>`;
@@ -272,6 +279,9 @@ function nextChallenge(session) {
         buttons.forEach((button) => button.disabled = false);
       }, 1050 + (sequence.length - 1) * 700);
       buttons.forEach((button) => button.addEventListener("click", () => {
+        if (session.locked) return;
+        button.classList.add("pressed");
+        schedule(session, () => button.classList.remove("pressed"), 180);
         if (Number(button.dataset.index) !== sequence[step]) recordAnswer(session, false);
         else if (++step === sequence.length) recordAnswer(session, true);
       }));
@@ -301,13 +311,13 @@ function nextChallenge(session) {
       const origin = performance.now();
       const marker = document.querySelector("#timing-marker");
       const position = (now) => {
-        const phase = ((now - origin) / 1800) % 2;
+        const phase = ((now - origin) / 1500) % 2;
         return (phase <= 1 ? phase : 2 - phase) * 100;
       };
       animate(session, (now) => marker.style.left = `${position(now)}%`);
       const stop = () => {
         const percent = position(performance.now());
-        recordAnswer(session, percent >= 42 && percent <= 58, percent >= 42 && percent <= 58 ? "Perfect timing" : "Outside the zone");
+        recordAnswer(session, percent >= 46 && percent <= 54, percent >= 46 && percent <= 54 ? "Perfect timing" : "Outside the zone");
       };
       document.querySelector("#timing-pad").addEventListener("click", stop);
       bindKey(session, (event) => {
