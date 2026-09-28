@@ -14,8 +14,10 @@ import {
 
 const app = document.querySelector("#app");
 const ROUND_MS = 45_000;
+const POMODORO_MS = { focus: 25 * 60_000, short: 5 * 60_000, long: 15 * 60_000 };
 let activeSession = null;
 let readyKeyHandler = null;
+let pomodoro = null;
 
 function heading(game) {
   return `<a class="back-link" href="#/">← All games</a>
@@ -32,11 +34,99 @@ function readHighScore(gameId) {
 
 function renderHome() {
   app.innerHTML = `<div class="home-heading"><h1>Exercises</h1>
-    <p class="home-intro">Choose a game. Each round lasts 45 seconds.</p></div>
+    <div class="home-actions"><p class="home-intro">Choose a game. Each round lasts 45 seconds.</p>
+    <a class="primary-button pomodoro-link" href="#/pomodoro">Start Pomodoro →</a></div></div>
     <div class="game-grid">${GAMES.map((game, index) => `<a class="game-card" href="#/game/${game.id}">
       <div class="card-top"><span class="card-number">${String(index + 1).padStart(2, "0")} / 09</span><span class="card-arrow" aria-hidden="true">↗</span></div>
       <h2>${game.name}</h2><p>${game.description}</p><p class="card-best">Best: ${readHighScore(game.id)}</p></a>`).join("")}</div>`;
   document.title = "The White Room";
+}
+
+function updatePomodoroView() {
+  const clock = document.querySelector("#pomodoro-clock");
+  if (!clock) return;
+  const seconds = Math.ceil(pomodoro.remainingMs / 1000);
+  clock.textContent = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  document.querySelector("#pomodoro-cycle").textContent = pomodoro.mode === "focus"
+    ? `Focus session ${pomodoro.completed % 4 + 1} of 4`
+    : pomodoro.mode === "short" ? "Short break" : "Long break";
+  document.querySelector("#pomodoro-status").textContent = pomodoro.status;
+  document.querySelector("#pomodoro-toggle").textContent = pomodoro.deadline ? "Pause" : "Start";
+  document.querySelectorAll("[data-pomodoro-mode]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.pomodoroMode === pomodoro.mode));
+  });
+  document.title = `${clock.textContent} ${pomodoro.mode === "focus" ? "Focus" : "Break"} | The White Room`;
+}
+
+function advancePomodoro(finished) {
+  if (pomodoro.mode === "focus") {
+    if (finished) pomodoro.completed++;
+    pomodoro.mode = pomodoro.completed > 0 && pomodoro.completed % 4 === 0 ? "long" : "short";
+  } else {
+    pomodoro.mode = "focus";
+  }
+  pomodoro.deadline = null;
+  pomodoro.remainingMs = POMODORO_MS[pomodoro.mode];
+  pomodoro.status = finished ? "Time is up. Start the next interval when ready." : "Start when ready.";
+  updatePomodoroView();
+}
+
+function tickPomodoro() {
+  if (!pomodoro?.deadline) return;
+  pomodoro.remainingMs = Math.max(0, pomodoro.deadline - Date.now());
+  if (pomodoro.remainingMs === 0) advancePomodoro(true);
+  else updatePomodoroView();
+}
+
+function renderPomodoro() {
+  if (!pomodoro) {
+    pomodoro = {
+      mode: "focus", completed: 0, remainingMs: POMODORO_MS.focus,
+      deadline: Date.now() + POMODORO_MS.focus, status: "Focus time.",
+    };
+    window.setInterval(tickPomodoro, 500);
+  }
+  app.innerHTML = `<div class="game-page"><a class="back-link" href="#/">← All games</a>
+    <div class="game-heading"><h1>Pomodoro</h1><p>Focus for 25 minutes, then take a 5-minute break. After four focus sessions, take 15 minutes.</p></div>
+    <div class="game-panel pomodoro-panel"><div class="pomodoro-modes" role="group" aria-label="Timer mode">
+      <button type="button" data-pomodoro-mode="focus">Focus · 25 min</button>
+      <button type="button" data-pomodoro-mode="short">Short break · 5 min</button>
+      <button type="button" data-pomodoro-mode="long">Long break · 15 min</button></div>
+      <div class="pomodoro-stage"><p class="pomodoro-cycle" id="pomodoro-cycle"></p>
+        <div class="pomodoro-clock" id="pomodoro-clock" role="timer"></div>
+        <p class="pomodoro-status" id="pomodoro-status" aria-live="polite"></p>
+        <div class="pomodoro-controls"><button class="primary-button" id="pomodoro-toggle" type="button"></button>
+          <button class="secondary-button" id="pomodoro-reset" type="button">Reset</button>
+          <button class="secondary-button" id="pomodoro-skip" type="button">Skip</button></div></div></div></div>`;
+  document.querySelector("#pomodoro-toggle").addEventListener("click", () => {
+    if (pomodoro.deadline) {
+      pomodoro.remainingMs = Math.max(0, pomodoro.deadline - Date.now());
+      pomodoro.deadline = null;
+      pomodoro.status = "Paused.";
+    } else {
+      pomodoro.deadline = Date.now() + pomodoro.remainingMs;
+      pomodoro.status = pomodoro.mode === "focus" ? "Focus time." : "Take a break.";
+    }
+    updatePomodoroView();
+  });
+  document.querySelector("#pomodoro-reset").addEventListener("click", () => {
+    pomodoro.deadline = null;
+    pomodoro.remainingMs = POMODORO_MS[pomodoro.mode];
+    pomodoro.status = "Start when ready.";
+    updatePomodoroView();
+  });
+  document.querySelector("#pomodoro-skip").addEventListener("click", () => advancePomodoro(false));
+  document.querySelectorAll("[data-pomodoro-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      pomodoro.mode = button.dataset.pomodoroMode;
+      pomodoro.deadline = null;
+      pomodoro.remainingMs = POMODORO_MS[pomodoro.mode];
+      pomodoro.status = "Start when ready.";
+      updatePomodoroView();
+    });
+  });
+  tickPomodoro();
+  updatePomodoroView();
 }
 
 function clearReadyHandler() {
@@ -334,6 +424,10 @@ function nextChallenge(session) {
 function renderRoute() {
   stopSession();
   clearReadyHandler();
+  if (location.hash === "#/pomodoro") {
+    renderPomodoro();
+    return;
+  }
   const match = location.hash.match(/^#\/game\/([a-z-]+)$/);
   const game = match && GAMES.find((item) => item.id === match[1]);
   if (game) renderArmed(game);

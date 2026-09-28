@@ -32,6 +32,8 @@ main { width: min(1160px, 100%); margin: 0 auto; padding: clamp(2rem, 5vw, 5rem)
 h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.065em; line-height: 1; font-weight: 700; }
 .home-intro { max-width: 18rem; margin: 0 0 .2rem; color: var(--muted); font-size: 1.08rem; line-height: 1.5; }
+.home-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
+.pomodoro-link { display: inline-flex; align-items: center; text-decoration: none; }
 .game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .game-card { min-height: 190px; padding: 1.5rem; background: var(--white); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-decoration: none; display: flex; flex-direction: column; transition: background .16s ease, transform .16s ease; }
 .game-card:hover { background: var(--soft-accent); }
@@ -107,6 +109,15 @@ h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.06
 .result-stats { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-bottom: 2.5rem; }
 .result-stats .stat-value { font-size: 2.5rem; }
 .result-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
+.pomodoro-modes { display: flex; border-bottom: 1px solid var(--line); }
+.pomodoro-modes button { flex: 1; min-height: 56px; padding: .75rem; border: 0; background: var(--white); color: var(--muted); font-weight: 700; }
+.pomodoro-modes button + button { border-left: 1px solid var(--line); }
+.pomodoro-modes button[aria-pressed="true"] { background: var(--soft-accent); color: var(--accent); }
+.pomodoro-stage { min-height: 390px; padding: 2rem 1.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.pomodoro-cycle { margin: 0 0 .75rem; color: var(--accent); font-size: .85rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.pomodoro-clock { font-size: clamp(5rem, 15vw, 9rem); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.08em; line-height: 1; }
+.pomodoro-status { min-height: 1.5rem; margin: 1.2rem 0 2rem; color: var(--muted); }
+.pomodoro-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; }
 
 @media (max-width: 800px) {
   .home-heading { align-items: start; flex-direction: column; gap: 1.2rem; }
@@ -122,6 +133,7 @@ h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.06
   .choices.shape-choices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .choice { min-height: 70px; }
   .figure-grid .choice, .number-grid .choice { min-height: 55px; }
+  .pomodoro-modes button { font-size: .82rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
