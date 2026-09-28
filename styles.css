@@ -20,10 +20,12 @@ a { color: inherit; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 
 .site-shell { min-height: 100vh; display: flex; flex-direction: column; }
-.site-header { display: flex; align-items: center; }
+.site-header { display: flex; align-items: center; justify-content: space-between; }
 .site-header { padding: 1.3rem clamp(1.25rem, 5vw, 5rem); border-bottom: 1px solid var(--line); }
 .wordmark { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; font-size: .86rem; font-weight: 800; letter-spacing: .12em; }
 .wordmark-symbol { font-size: 1.9rem; line-height: .6; font-weight: 400; }
+.header-pomodoro { padding: .65rem 1rem; border: 1px solid var(--line); text-decoration: none; font-size: .9rem; font-weight: 700; }
+.header-pomodoro:hover { border-color: var(--accent); color: var(--accent); }
 .eyebrow, .card-number, .stat-label { font-size: .73rem; font-weight: 700; letter-spacing: .14em; }
 main { width: min(1160px, 100%); margin: 0 auto; padding: clamp(2rem, 5vw, 5rem) clamp(1.25rem, 5vw, 3rem); flex: 1; }
 
@@ -32,8 +34,6 @@ main { width: min(1160px, 100%); margin: 0 auto; padding: clamp(2rem, 5vw, 5rem)
 h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.065em; line-height: 1; font-weight: 700; }
 .home-intro { max-width: 18rem; margin: 0 0 .2rem; color: var(--muted); font-size: 1.08rem; line-height: 1.5; }
-.home-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 1rem; }
-.pomodoro-link { display: inline-flex; align-items: center; text-decoration: none; }
 .game-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .game-card { min-height: 190px; padding: 1.5rem; background: var(--white); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-decoration: none; display: flex; flex-direction: column; transition: background .16s ease, transform .16s ease; }
 .game-card:hover { background: var(--soft-accent); }
@@ -109,15 +109,18 @@ h1 { margin-bottom: 0; font-size: clamp(2.7rem, 7vw, 5rem); letter-spacing: -.06
 .result-stats { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-bottom: 2.5rem; }
 .result-stats .stat-value { font-size: 2.5rem; }
 .result-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
-.pomodoro-modes { display: flex; border-bottom: 1px solid var(--line); }
-.pomodoro-modes button { flex: 1; min-height: 56px; padding: .75rem; border: 0; background: var(--white); color: var(--muted); font-weight: 700; }
-.pomodoro-modes button + button { border-left: 1px solid var(--line); }
-.pomodoro-modes button[aria-pressed="true"] { background: var(--soft-accent); color: var(--accent); }
-.pomodoro-stage { min-height: 390px; padding: 2rem 1.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.pomodoro-cycle { margin: 0 0 .75rem; color: var(--accent); font-size: .85rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
-.pomodoro-clock { font-size: clamp(5rem, 15vw, 9rem); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.08em; line-height: 1; }
-.pomodoro-status { min-height: 1.5rem; margin: 1.2rem 0 2rem; color: var(--muted); }
+.pomodoro-page { max-width: 640px; min-height: 70vh; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.pomodoro-modes { display: flex; justify-content: center; gap: 1.5rem; width: 100%; }
+.pomodoro-modes button { min-height: 48px; padding: .5rem .15rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font-weight: 700; }
+.pomodoro-modes button[aria-pressed="true"] { border-bottom-color: var(--accent); color: var(--ink); }
+.pomodoro-stage { padding: 3rem 1.25rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.pomodoro-cycle { margin: 0 0 1rem; color: var(--muted); font-size: .85rem; font-weight: 700; }
+.pomodoro-clock { font-size: clamp(5rem, 15vw, 8rem); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.08em; line-height: 1; }
+.pomodoro-status { min-height: 1.5rem; margin: 1rem 0 1.5rem; color: var(--muted); }
 .pomodoro-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; }
+.pomodoro-controls .secondary-button { border-color: transparent; background: transparent; color: var(--muted); }
+.pomodoro-controls .secondary-button:hover { color: var(--ink); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (max-width: 800px) {
   .home-heading { align-items: start; flex-direction: column; gap: 1.2rem; }
